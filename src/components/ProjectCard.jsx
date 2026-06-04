@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Tilt } from 'react-tilt';
 import { FiGithub, FiExternalLink } from 'react-icons/fi';
 
 const ProjectCard = ({ project, index }) => {
@@ -20,9 +19,8 @@ const ProjectCard = ({ project, index }) => {
           <img
             src={project.image}
             alt={project.title}
-            className={`w-full h-full transition-transform duration-700 group-hover:scale-110 ${
-              project.imageFit === 'contain' ? 'object-contain p-2' : 'object-cover'
-            }`}
+            className={`w-full h-full transition-transform duration-700 group-hover:scale-110 ${project.imageFit === 'contain' ? 'object-contain p-2' : 'object-cover'
+              }`}
           />
           {/* Subtle overlay that darkens slightly on hover */}
           <div className="absolute inset-0 bg-slate-900/20 group-hover:bg-slate-900/40 transition-colors duration-500" />
