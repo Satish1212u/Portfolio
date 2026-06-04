@@ -11,9 +11,10 @@ const ProjectCard = ({ project, index }) => {
       transition={{ duration: 0.5, delay: index * 0.1 }}
       className="h-full"
     >
-      <Tilt
-        options={{ max: 12, scale: 1.02, speed: 400 }}
+
+      <div
         className="glass-dark bg-white dark:bg-slate-900/40 rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 flex flex-col h-full shadow-xl hover:shadow-[0_10px_40px_rgba(6,182,212,0.15)] transition-shadow duration-300"
+
       >
         <div className="relative w-full aspect-video overflow-hidden group bg-slate-950/20">
           <img
@@ -55,7 +56,7 @@ const ProjectCard = ({ project, index }) => {
             )}
           </div>
         </div>
-      </Tilt>
+      </div>
     </motion.div>
   );
 };
