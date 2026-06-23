@@ -94,7 +94,7 @@ const Home = () => {
               <Link to="/projects" className="w-full sm:w-auto px-8 py-3.5 rounded-full glass border border-slate-300 dark:border-slate-600 font-semibold flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10 transition-all duration-300 hover:-translate-y-1">
                 View Projects
               </Link>
-              <a href="/resume.pdf" download="Satish_Gupta_Resume.pdf" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto px-8 py-3.5 rounded-full glass border border-slate-300 dark:border-slate-600 font-semibold flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(139,92,246,0.3)]">
+              <a href="/Satish_Gupta_Resume.pdf" download="Satish_Gupta_Resume.pdf" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto px-8 py-3.5 rounded-full glass border border-slate-300 dark:border-slate-600 font-semibold flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(139,92,246,0.3)]">
                 <FiDownload className="mr-2" /> Download Resume
               </a>
             </div>
