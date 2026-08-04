@@ -18,15 +18,6 @@ const learningSkills = [
 
 const experiences = [
   {
-    role: 'Data Operations Specialist',
-    company: 'ETASHA Society',
-    period: 'july 2026 – Present',
-    description:
-      'Perform data entry and data management using Microsoft Excel and Google Sheets.  • Ensure data accuracy and consistency in data entry and database operations.  • Prepare reports by cleaning, transforming, and summarizing large datasets.  • Collaborate with teams to understand data requirements and deliver accurate results.',
-    border: 'hover:border-blue-400/40',
-    companyColor: 'text-blue-400',
-  },
-  {
     role: 'Frontend Developer',
     company: 'Sysslan IT Solutions',
     period: 'April 2026 - Present',
