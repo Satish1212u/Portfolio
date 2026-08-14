@@ -204,8 +204,8 @@ const Skills = () => {
         {/* Download Resume */}
         <div className="flex justify-center">
           <motion.a
-            href="/Satish_Gupta_Resume.pdf"
-            download
+            href="/Satish_Gupta_Resume_2026.pdf"
+            download="Satish_Gupta_Resume_2026.pdf"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-400 to-purple-500 text-white font-semibold shadow-lg hover:shadow-cyan-500/30 transition duration-300"
