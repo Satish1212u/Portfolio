@@ -15,6 +15,46 @@ const PROJECT_TYPES = [
   'Other',
 ];
 
+// Single source of truth for validation rules
+const validateField = (field, value) => {
+  switch (field) {
+    case 'name': {
+      const trimmed = (value || '').trim();
+      if (!trimmed) return 'Please enter your name.';
+      if (trimmed.length < 2) return 'Name must be at least 2 characters.';
+      return '';
+    }
+    case 'email': {
+      const trimmed = (value || '').trim();
+      if (!trimmed) return 'Please enter your email address.';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) return 'Please enter a valid email address.';
+      return '';
+    }
+    case 'projectType': {
+      if (!value) return 'Please select a project type.';
+      return '';
+    }
+    case 'phone': {
+      const trimmed = (value || '').trim();
+      if (!trimmed) return ''; // Optional: empty is valid
+      const phoneDigits = trimmed.replace(/\D/g, '');
+      const validPhonePattern = /^(\+?\d{1,4}[\s-]?)?(\(?\d{1,4}\)?[\s-]?)?[\d\s-]{6,16}$/.test(trimmed);
+      if (!validPhonePattern || phoneDigits.length < 7 || phoneDigits.length > 16) {
+        return 'Please enter a valid phone number (e.g., +91 98765 43210).';
+      }
+      return '';
+    }
+    case 'message': {
+      const trimmed = (value || '').trim();
+      if (!trimmed) return 'Please enter your message.';
+      if (trimmed.length < 10) return 'Message must be at least 10 characters long.';
+      return '';
+    }
+    default:
+      return '';
+  }
+};
+
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -24,69 +64,109 @@ const Contact = () => {
     message: '',
   });
 
-  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({
+    name: false,
+    email: false,
+    projectType: false,
+    phone: false,
+    message: false,
+  });
+
   const [status, setStatus] = useState({ state: 'idle', message: '' }); // idle | loading | success | error
 
-  const validate = () => {
-    const newErrors = {};
+  // Compute field validation state (Default, Valid / Green, Invalid / Red)
+  const getFieldState = (field) => {
+    const val = formData[field] || '';
+    const err = validateField(field, val);
+    const isTouched = touched[field];
 
-    // Name validation
-    if (!formData.name.trim()) {
-      newErrors.name = 'Please enter your name.';
-    } else if (formData.name.trim().length < 2) {
-      newErrors.name = 'Name must be at least 2 characters.';
-    }
-
-    // Email validation
-    if (!formData.email.trim()) {
-      newErrors.email = 'Please enter your email address.';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
-      newErrors.email = 'Please enter a valid email address.';
-    }
-
-    // Project Type validation
-    if (!formData.projectType) {
-      newErrors.projectType = 'Please select a project type.';
-    }
-
-    // Phone / WhatsApp validation (Optional, but validate format if provided)
-    if (formData.phone.trim()) {
-      const phoneDigits = formData.phone.replace(/\D/g, '');
-      const validPhonePattern = /^(\+?\d{1,4}[\s-]?)?(\(?\d{1,4}\)?[\s-]?)?[\d\s-]{6,16}$/.test(
-        formData.phone.trim()
-      );
-      if (!validPhonePattern || phoneDigits.length < 7 || phoneDigits.length > 16) {
-        newErrors.phone = 'Please enter a valid phone number (e.g., +91 98765 43210).';
+    if (field === 'phone') {
+      const hasContent = val.trim().length > 0;
+      if (!hasContent) {
+        // Optional field: empty stays normal default (not red, not green)
+        return { isValid: false, isInvalid: false, error: '' };
       }
+      if (err) {
+        return { isValid: false, isInvalid: true, error: err };
+      }
+      return { isValid: true, isInvalid: false, error: '' };
     }
 
-    // Message validation
-    if (!formData.message.trim()) {
-      newErrors.message = 'Please enter your message.';
-    } else if (formData.message.trim().length < 10) {
-      newErrors.message = 'Message must be at least 10 characters long.';
+    // Required fields: name, email, projectType, message
+    const isCompleted = val.trim() !== '' && err === '';
+    if (isCompleted) {
+      return { isValid: true, isInvalid: false, error: '' };
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    if (isTouched && err) {
+      return { isValid: false, isInvalid: true, error: err };
+    }
+
+    return { isValid: false, isInvalid: false, error: '' };
+  };
+
+  const getInputClass = (field, isTextarea = false) => {
+    const { isValid, isInvalid } = getFieldState(field);
+    const baseClass = `w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border outline-none transition-all text-slate-800 dark:text-white disabled:opacity-60 disabled:cursor-not-allowed ${
+      isTextarea ? 'resize-none' : ''
+    }`;
+
+    if (isInvalid) {
+      return `${baseClass} border-rose-500 dark:border-rose-500/80 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20`;
+    }
+
+    if (isValid) {
+      return `${baseClass} border-emerald-500 dark:border-emerald-500/80 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20`;
+    }
+
+    return `${baseClass} border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-2 focus:ring-primary/20`;
+  };
+
+  const getSelectClass = (field) => {
+    const { isValid, isInvalid } = getFieldState(field);
+    const hasValue = Boolean(formData[field]);
+    const textColor = hasValue ? 'text-slate-800 dark:text-white' : 'text-slate-400 dark:text-slate-500';
+    const baseClass = `w-full px-4 py-3 pr-10 rounded-xl bg-slate-50 dark:bg-slate-800/80 border appearance-none outline-none transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed ${textColor}`;
+
+    if (isInvalid) {
+      return `${baseClass} border-rose-500 dark:border-rose-500/80 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20`;
+    }
+
+    if (isValid) {
+      return `${baseClass} border-emerald-500 dark:border-emerald-500/80 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20`;
+    }
+
+    return `${baseClass} border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-2 focus:ring-primary/20`;
   };
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear field-specific error as user types
-    if (errors[field]) {
-      setErrors((prev) => {
-        const updated = { ...prev };
-        delete updated[field];
-        return updated;
-      });
-    }
+    setTouched((prev) => ({ ...prev, [field]: true }));
+  };
+
+  const handleBlur = (field) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validate()) {
+    // Mark all fields as touched to trigger any missing error states
+    setTouched({
+      name: true,
+      email: true,
+      projectType: true,
+      phone: true,
+      message: true,
+    });
+
+    const nameErr = validateField('name', formData.name);
+    const emailErr = validateField('email', formData.email);
+    const projectTypeErr = validateField('projectType', formData.projectType);
+    const phoneErr = validateField('phone', formData.phone);
+    const messageErr = validateField('message', formData.message);
+
+    if (nameErr || emailErr || projectTypeErr || phoneErr || messageErr) {
       return;
     }
 
@@ -127,7 +207,7 @@ const Contact = () => {
         message: "Message sent successfully! I'll get back to you soon.",
       });
 
-      // Reset form state on successful submission
+      // Reset form and touched states on successful submission
       setFormData({
         name: '',
         email: '',
@@ -135,7 +215,13 @@ const Contact = () => {
         phone: '',
         message: '',
       });
-      setErrors({});
+      setTouched({
+        name: false,
+        email: false,
+        projectType: false,
+        phone: false,
+        message: false,
+      });
     } catch (err) {
       console.error('EmailJS Submission Error:', err);
       setStatus({
@@ -144,6 +230,12 @@ const Contact = () => {
       });
     }
   };
+
+  const nameState = getFieldState('name');
+  const emailState = getFieldState('email');
+  const projectTypeState = getFieldState('projectType');
+  const phoneState = getFieldState('phone');
+  const messageState = getFieldState('message');
 
   return (
     <motion.div
@@ -252,20 +344,17 @@ const Contact = () => {
                   id="name"
                   value={formData.name}
                   onChange={(e) => handleChange('name', e.target.value)}
+                  onBlur={() => handleBlur('name')}
                   disabled={status.state === 'loading'}
-                  aria-invalid={!!errors.name}
-                  aria-describedby={errors.name ? 'name-error' : undefined}
-                  className={`w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border ${
-                    errors.name
-                      ? 'border-rose-500 dark:border-rose-500/80 focus:border-rose-500 focus:ring-rose-500/20'
-                      : 'border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-primary/20'
-                  } focus:ring-2 outline-none transition-all text-slate-800 dark:text-white disabled:opacity-60 disabled:cursor-not-allowed`}
+                  aria-invalid={nameState.isInvalid}
+                  aria-describedby={nameState.isInvalid ? 'name-error' : undefined}
+                  className={getInputClass('name')}
                   placeholder="Your Name"
                 />
-                {errors.name && (
+                {nameState.isInvalid && (
                   <p id="name-error" className="text-xs text-rose-500 dark:text-rose-400 mt-1.5 ml-1 flex items-center gap-1">
-                    <FiAlertCircle className="w-3.5 h-3.5" />
-                    {errors.name}
+                    <FiAlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    {nameState.error}
                   </p>
                 )}
               </div>
@@ -280,20 +369,17 @@ const Contact = () => {
                   id="email"
                   value={formData.email}
                   onChange={(e) => handleChange('email', e.target.value)}
+                  onBlur={() => handleBlur('email')}
                   disabled={status.state === 'loading'}
-                  aria-invalid={!!errors.email}
-                  aria-describedby={errors.email ? 'email-error' : undefined}
-                  className={`w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border ${
-                    errors.email
-                      ? 'border-rose-500 dark:border-rose-500/80 focus:border-rose-500 focus:ring-rose-500/20'
-                      : 'border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-primary/20'
-                  } focus:ring-2 outline-none transition-all text-slate-800 dark:text-white disabled:opacity-60 disabled:cursor-not-allowed`}
+                  aria-invalid={emailState.isInvalid}
+                  aria-describedby={emailState.isInvalid ? 'email-error' : undefined}
+                  className={getInputClass('email')}
                   placeholder="Your Email"
                 />
-                {errors.email && (
+                {emailState.isInvalid && (
                   <p id="email-error" className="text-xs text-rose-500 dark:text-rose-400 mt-1.5 ml-1 flex items-center gap-1">
-                    <FiAlertCircle className="w-3.5 h-3.5" />
-                    {errors.email}
+                    <FiAlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    {emailState.error}
                   </p>
                 )}
               </div>
@@ -308,16 +394,11 @@ const Contact = () => {
                     id="projectType"
                     value={formData.projectType}
                     onChange={(e) => handleChange('projectType', e.target.value)}
+                    onBlur={() => handleBlur('projectType')}
                     disabled={status.state === 'loading'}
-                    aria-invalid={!!errors.projectType}
-                    aria-describedby={errors.projectType ? 'projectType-error' : undefined}
-                    className={`w-full px-4 py-3 pr-10 rounded-xl bg-slate-50 dark:bg-slate-800/80 border appearance-none ${
-                      errors.projectType
-                        ? 'border-rose-500 dark:border-rose-500/80 focus:border-rose-500 focus:ring-rose-500/20'
-                        : 'border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-primary/20'
-                    } focus:ring-2 outline-none transition-all ${
-                      formData.projectType ? 'text-slate-800 dark:text-white' : 'text-slate-400 dark:text-slate-500'
-                    } cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed`}
+                    aria-invalid={projectTypeState.isInvalid}
+                    aria-describedby={projectTypeState.isInvalid ? 'projectType-error' : undefined}
+                    className={getSelectClass('projectType')}
                   >
                     <option value="" disabled className="bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-500">
                       Select Project Type
@@ -336,10 +417,10 @@ const Contact = () => {
                     <FiChevronDown className="w-5 h-5" />
                   </div>
                 </div>
-                {errors.projectType && (
+                {projectTypeState.isInvalid && (
                   <p id="projectType-error" className="text-xs text-rose-500 dark:text-rose-400 mt-1.5 ml-1 flex items-center gap-1">
-                    <FiAlertCircle className="w-3.5 h-3.5" />
-                    {errors.projectType}
+                    <FiAlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    {projectTypeState.error}
                   </p>
                 )}
               </div>
@@ -354,20 +435,17 @@ const Contact = () => {
                   id="phone"
                   value={formData.phone}
                   onChange={(e) => handleChange('phone', e.target.value)}
+                  onBlur={() => handleBlur('phone')}
                   disabled={status.state === 'loading'}
-                  aria-invalid={!!errors.phone}
-                  aria-describedby={errors.phone ? 'phone-error' : undefined}
-                  className={`w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border ${
-                    errors.phone
-                      ? 'border-rose-500 dark:border-rose-500/80 focus:border-rose-500 focus:ring-rose-500/20'
-                      : 'border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-primary/20'
-                  } focus:ring-2 outline-none transition-all text-slate-800 dark:text-white disabled:opacity-60 disabled:cursor-not-allowed`}
+                  aria-invalid={phoneState.isInvalid}
+                  aria-describedby={phoneState.isInvalid ? 'phone-error' : undefined}
+                  className={getInputClass('phone')}
                   placeholder="+91 XXXXX XXXXX"
                 />
-                {errors.phone && (
+                {phoneState.isInvalid && (
                   <p id="phone-error" className="text-xs text-rose-500 dark:text-rose-400 mt-1.5 ml-1 flex items-center gap-1">
-                    <FiAlertCircle className="w-3.5 h-3.5" />
-                    {errors.phone}
+                    <FiAlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    {phoneState.error}
                   </p>
                 )}
               </div>
@@ -382,20 +460,17 @@ const Contact = () => {
                   rows="5"
                   value={formData.message}
                   onChange={(e) => handleChange('message', e.target.value)}
+                  onBlur={() => handleBlur('message')}
                   disabled={status.state === 'loading'}
-                  aria-invalid={!!errors.message}
-                  aria-describedby={errors.message ? 'message-error' : undefined}
-                  className={`w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border ${
-                    errors.message
-                      ? 'border-rose-500 dark:border-rose-500/80 focus:border-rose-500 focus:ring-rose-500/20'
-                      : 'border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-primary/20'
-                  } focus:ring-2 outline-none transition-all resize-none text-slate-800 dark:text-white disabled:opacity-60 disabled:cursor-not-allowed`}
+                  aria-invalid={messageState.isInvalid}
+                  aria-describedby={messageState.isInvalid ? 'message-error' : undefined}
+                  className={getInputClass('message', true)}
                   placeholder="I'd like to talk about a project..."
                 />
-                {errors.message && (
+                {messageState.isInvalid && (
                   <p id="message-error" className="text-xs text-rose-500 dark:text-rose-400 mt-1.5 ml-1 flex items-center gap-1">
-                    <FiAlertCircle className="w-3.5 h-3.5" />
-                    {errors.message}
+                    <FiAlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    {messageState.error}
                   </p>
                 )}
               </div>
