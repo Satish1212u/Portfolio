@@ -4,7 +4,15 @@ import ProjectCard from '../components/ProjectCard';
 
 const allProjects = [
 
-
+  {
+    title: 'Jeeva AI',
+    description: 'A production-ready Telegram AI health companion with multilingual conversations, medical report and prescription assistance, medicine intelligence, safety guardrails, provider fallbacks, and persistent family health profiles.',
+    tags: ['TypeScript', 'AI', 'Telegram', 'Gemini', 'Grok', 'OpenRouter', 'PostgreSQL', 'Prisma'],
+    category: 'AI / Healthcare',
+    image: 'jeeva.png',
+    liveUrl: 'https://jeeva-ai-lq7p.onrender.com',
+    githubUrl: 'https://github.com/Satish1212u/Jeeva-AI',
+  },
   {
     title: 'AtmosIQ',
     description: 'A forecasting app using OpenWeather API with dynamic backgrounds based on the current weather condition.',
