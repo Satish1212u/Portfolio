@@ -6,7 +6,7 @@ const allProjects = [
 
   {
     title: 'Jeeva AI',
-    description: 'A production-ready Telegram AI health companion with multilingual conversations, medical report and prescription assistance, medicine intelligence, safety guardrails, provider fallbacks, and persistent family health profiles.',
+    description: 'A production-ready Telegram AI health companion for multilingual health support, medical reports, prescriptions, medicine insights, and safety-focused assistance.',
     tags: ['TypeScript', 'AI', 'Telegram', 'Gemini', 'Grok', 'OpenRouter', 'PostgreSQL', 'Prisma'],
     category: 'AI / Healthcare',
     image: 'jeeva.png',
