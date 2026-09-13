@@ -19,6 +19,7 @@ const allProjects = [
     tags: ['JavaScript', 'API'],
     category: 'AI / API',
     image: 'Atmos.png',
+    imageFit: 'contain',
     liveUrl: 'https://atmos-iq-chi.vercel.app/',
     githubUrl: 'https://github.com/Satish1212u/AtmosIQ',
   },
