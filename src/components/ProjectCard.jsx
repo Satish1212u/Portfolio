@@ -16,19 +16,16 @@ const ProjectCard = ({ project, index }) => {
         className="glass-dark bg-white dark:bg-slate-900/40 rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 flex flex-col h-full shadow-xl hover:shadow-[0_10px_40px_rgba(6,182,212,0.15)] transition-shadow duration-300"
 
       >
-        <div className="relative w-full aspect-video overflow-hidden group bg-slate-950/20">
+        <div className="project-image group">
           <img
-            src={project.image}
+            src={project.image?.trim()}
             alt={project.title}
-            className={`w-full h-full transition-transform duration-700 group-hover:scale-110 ${project.imageFit === 'contain' ? 'object-contain p-2' : 'object-cover'
-              }`}
+            className={`transition-transform duration-500 ${
+              project.title === 'AtmosIQ' || project.imageFit === 'contain'
+                ? 'project-image-contain'
+                : 'project-image-cover group-hover:scale-105'
+            }`}
           />
-          {/* Subtle overlay that darkens slightly on hover */}
-          <div className="absolute inset-0 bg-slate-900/20 group-hover:bg-slate-900/40 transition-colors duration-500" />
-          {/* Gradient at the bottom of the image for smooth transition */}
-          {project.imageFit !== 'contain' && (
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent opacity-90" />
-          )}
         </div>
 
         <div className="p-6 md:p-8 flex flex-col flex-grow relative z-10 -mt-8">

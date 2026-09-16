@@ -10,20 +10,20 @@ import SkillsSection from "../components/SkillsSection";
 
 const featuredProjects = [
   {
-    title: 'Raksha Ai',
-    description: 'An AI-powered cybersecurity assistant that helps users detect scams, understand threats, and get step-by-step safety guidance.',
-    tags: ['HTML', 'CSS', 'JavaScript', 'Node.js', 'Express', 'API Integration'],
-    category: 'Full Stack',
-    image: 'Raksha Ai.png',
-    liveUrl: 'https://raksha-ai-hazel.vercel.app/',
-    githubUrl: 'https://github.com/Satish1212u/rakshaai-frontend',
+    title: 'Jeeva AI',
+    description: 'A production-ready Telegram AI health companion for multilingual health support, medical reports, prescriptions, medicine insights, and safety-focused assistance.',
+    tags: ['TypeScript', 'AI', 'Telegram', 'Gemini', 'Grok', 'OpenRouter', 'PostgreSQL', 'Prisma'],
+    category: 'AI / Healthcare',
+    image: 'jeeva.png',
+    liveUrl: 'https://t.me/JeevaAI_bot',
+    githubUrl: 'https://github.com/Satish1212u/Jeeva-AI',
   },
   {
     title: 'AtmosIQ',
     description: 'A forecasting app using OpenWeather API with dynamic backgrounds based on the current weather condition.',
     tags: ['JavaScript', 'API'],
     category: 'Frontend',
-    image: 'AtmosIQ.png',
+    image: 'Atmos.jpg',
     imageFit: 'contain',
     liveUrl: 'https://atmos-iq-chi.vercel.app/',
     githubUrl: 'https://github.com/Satish1212u/AtmosIQ',
